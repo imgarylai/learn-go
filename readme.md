@@ -20,6 +20,7 @@ go run .
 | [05 - Tooling](docs/05-tooling.md) | Go toolchain |
 | [06 - Structs](docs/06-structs.md) | Types and structs |
 | [07 - Pointers](docs/07-pointers.md) | Understanding pointers |
+| [08 - Web Frameworks](docs/08-web-frameworks.md) | Chi, Gin, Echo, Fiber |
 
 ## Quick Reference
 
