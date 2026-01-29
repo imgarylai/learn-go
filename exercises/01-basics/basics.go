@@ -9,7 +9,7 @@ package basics
 // In JS: const greeting = "Hello, Go!"
 func GetGreeting() string {
 	// TODO: declare greeting using := and return it
-	return ""
+	return "Hello, Go!"
 }
 
 // 2. Return multiple values (name and age)
@@ -17,7 +17,7 @@ func GetGreeting() string {
 // In Go: functions can return multiple values directly
 func GetPersonInfo() (string, int) {
 	// TODO: return name "Alice" and age 30
-	return "", 0
+	return "Alice", 30
 }
 
 // 3. Type conversion - convert int to float64 percentage
@@ -25,7 +25,7 @@ func GetPersonInfo() (string, int) {
 // In Go: explicit conversion required
 func IntToPercentage(n int) float64 {
 	// TODO: convert n to float64 and divide by 100
-	return 0
+	return float64(n) / 100
 }
 
 // 4. Return zero values for each type
@@ -41,7 +41,8 @@ func GetZeroValues() (int, string, bool, float64) {
 // In JS: const PI = 3.14159; return PI * radius * radius
 func GetCircleArea(radius float64) float64 {
 	// TODO: declare PI as a constant and calculate area
-	return 0
+	pi := 3.14159
+	return pi * radius * radius
 }
 
 // 6. Swap two integers and return them
@@ -49,7 +50,7 @@ func GetCircleArea(radius float64) float64 {
 // In Go: multiple return values make this elegant
 func Swap(a, b int) (int, int) {
 	// TODO: return b, a (swapped)
-	return 0, 0
+	return b, a
 }
 
 // 7. Type inference - Go infers types from values
@@ -58,5 +59,9 @@ func InferredTypes() (intVal int, floatVal float64, stringVal string, boolVal bo
 	// TODO: use := to declare variables with these values:
 	// 42, 3.14, "hello", true
 	// Then return them
-	return
+	intVal = 42
+	floatVal = 3.14
+	stringVal = "hello"
+	boolVal = true
+	return intVal, floatVal, stringVal, boolVal
 }
