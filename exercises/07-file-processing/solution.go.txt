@@ -196,3 +196,83 @@ func ProcessLargeFile(filename string, process func(lineNum int, line string) er
 
 	return scanner.Err()
 }
+
+// ============ Part 2: Working with Real CSV Files ============
+
+// 11. ReadProducts
+func ReadProducts(filename string) ([]Product, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var products []Product
+	for i, row := range records {
+		if i == 0 {
+			continue // Skip header
+		}
+
+		id, _ := strconv.Atoi(row[0])
+		price, _ := strconv.ParseFloat(row[2], 64)
+
+		products = append(products, Product{
+			ID:       id,
+			Name:     row[1],
+			Price:    price,
+			Category: row[3],
+		})
+	}
+
+	return products, nil
+}
+
+// 12. FilterProductsByCategory
+func FilterProductsByCategory(products []Product, category string) []Product {
+	var result []Product
+	for _, p := range products {
+		if p.Category == category {
+			result = append(result, p)
+		}
+	}
+	return result
+}
+
+// 13. CalculateTotalValue
+func CalculateTotalValue(products []Product) float64 {
+	var total float64
+	for _, p := range products {
+		total += p.Price
+	}
+	return total
+}
+
+// 14. FindMostExpensive
+func FindMostExpensive(products []Product) *Product {
+	if len(products) == 0 {
+		return nil
+	}
+
+	most := &products[0]
+	for i := range products {
+		if products[i].Price > most.Price {
+			most = &products[i]
+		}
+	}
+	return most
+}
+
+// 15. GroupProductsByCategory
+func GroupProductsByCategory(products []Product) map[string][]Product {
+	result := make(map[string][]Product)
+	for _, p := range products {
+		result[p.Category] = append(result[p.Category], p)
+	}
+	return result
+}

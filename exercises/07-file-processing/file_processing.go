@@ -100,6 +100,50 @@ func ProcessLargeFile(filename string, process func(lineNum int, line string) er
 	return nil
 }
 
+// ============ Part 2: Working with Real CSV Files ============
+// Use the CSV files in testdata/ folder
+
+// Product represents a product from products.csv
+type Product struct {
+	ID       int     `json:"id"`
+	Name     string  `json:"name"`
+	Price    float64 `json:"price"`
+	Category string  `json:"category"`
+}
+
+// 11. ReadProducts reads products.csv from testdata folder
+// CSV format: id,name,price,category (with header)
+func ReadProducts(filename string) ([]Product, error) {
+	// TODO: Read CSV file and parse into []Product
+	// Hint: use strconv.Atoi for ID, strconv.ParseFloat for Price
+	return nil, nil
+}
+
+// 12. FilterProductsByCategory returns products matching the category
+func FilterProductsByCategory(products []Product, category string) []Product {
+	// TODO: Return only products with matching category
+	return nil
+}
+
+// 13. CalculateTotalValue returns sum of all product prices
+func CalculateTotalValue(products []Product) float64 {
+	// TODO: Sum all prices
+	return 0
+}
+
+// 14. FindMostExpensive returns the product with highest price
+func FindMostExpensive(products []Product) *Product {
+	// TODO: Find and return pointer to most expensive product
+	// Return nil if slice is empty
+	return nil
+}
+
+// 15. GroupProductsByCategory groups products by their category
+func GroupProductsByCategory(products []Product) map[string][]Product {
+	// TODO: Return map of category -> products
+	return nil
+}
+
 // Helper: these are used by tests to avoid duplication
 // Students shouldn't need to modify these
 

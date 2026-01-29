@@ -263,3 +263,119 @@ func TestProcessLargeFile(t *testing.T) {
 		t.Errorf("line numbers: got %v, want %v", lineNums, expectedNums)
 	}
 }
+
+// ============ Tests using real CSV files from testdata/ ============
+
+func TestReadLinesFromTestdata(t *testing.T) {
+	lines, err := ReadLines("testdata/sample.txt")
+	if err != nil {
+		t.Fatalf("ReadLines failed: %v", err)
+	}
+
+	if len(lines) != 5 {
+		t.Errorf("expected 5 lines, got %d", len(lines))
+	}
+
+	if lines[0] != "Hello, Go!" {
+		t.Errorf("first line: got %q, want %q", lines[0], "Hello, Go!")
+	}
+}
+
+func TestReadCSVFromTestdata(t *testing.T) {
+	people, err := ReadCSV("testdata/people.csv")
+	if err != nil {
+		t.Fatalf("ReadCSV failed: %v", err)
+	}
+
+	if len(people) != 5 {
+		t.Errorf("expected 5 people, got %d", len(people))
+	}
+
+	// Check first person
+	if people[0].Name != "Alice" || people[0].Age != 30 {
+		t.Errorf("first person: got %+v, want Alice/30", people[0])
+	}
+}
+
+func TestReadProducts(t *testing.T) {
+	products, err := ReadProducts("testdata/products.csv")
+	if err != nil {
+		t.Fatalf("ReadProducts failed: %v", err)
+	}
+
+	if len(products) != 8 {
+		t.Errorf("expected 8 products, got %d", len(products))
+	}
+
+	// Check first product
+	if products[0].ID != 1 || products[0].Name != "Laptop" {
+		t.Errorf("first product: got %+v", products[0])
+	}
+
+	if products[0].Price != 999.99 {
+		t.Errorf("laptop price: got %f, want 999.99", products[0].Price)
+	}
+}
+
+func TestFilterProductsByCategory(t *testing.T) {
+	products, _ := ReadProducts("testdata/products.csv")
+	electronics := FilterProductsByCategory(products, "Electronics")
+
+	if len(electronics) != 3 {
+		t.Errorf("expected 3 electronics, got %d", len(electronics))
+	}
+
+	for _, p := range electronics {
+		if p.Category != "Electronics" {
+			t.Errorf("found non-electronics: %+v", p)
+		}
+	}
+}
+
+func TestCalculateTotalValue(t *testing.T) {
+	products, _ := ReadProducts("testdata/products.csv")
+	total := CalculateTotalValue(products)
+
+	// 999.99 + 79.99 + 12.99 + 4.99 + 49.99 + 29.99 + 19.99 + 34.99 = 1232.92
+	expected := 1232.92
+	if total < expected-0.01 || total > expected+0.01 {
+		t.Errorf("total: got %f, want %f", total, expected)
+	}
+}
+
+func TestFindMostExpensive(t *testing.T) {
+	products, _ := ReadProducts("testdata/products.csv")
+	most := FindMostExpensive(products)
+
+	if most == nil {
+		t.Fatal("FindMostExpensive returned nil")
+	}
+
+	if most.Name != "Laptop" {
+		t.Errorf("most expensive: got %s, want Laptop", most.Name)
+	}
+}
+
+func TestFindMostExpensiveEmpty(t *testing.T) {
+	most := FindMostExpensive([]Product{})
+	if most != nil {
+		t.Errorf("expected nil for empty slice, got %+v", most)
+	}
+}
+
+func TestGroupProductsByCategory(t *testing.T) {
+	products, _ := ReadProducts("testdata/products.csv")
+	grouped := GroupProductsByCategory(products)
+
+	if len(grouped) != 4 {
+		t.Errorf("expected 4 categories, got %d", len(grouped))
+	}
+
+	if len(grouped["Electronics"]) != 3 {
+		t.Errorf("Electronics: expected 3, got %d", len(grouped["Electronics"]))
+	}
+
+	if len(grouped["Kitchen"]) != 2 {
+		t.Errorf("Kitchen: expected 2, got %d", len(grouped["Kitchen"]))
+	}
+}

@@ -3,7 +3,10 @@
 package dataprocessing
 
 import (
+	"encoding/csv"
+	"os"
 	"sort"
+	"strconv"
 
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
@@ -177,4 +180,128 @@ func GetQuantityStats(df dataframe.DataFrame) ColumnStats {
 		Min:  col.Min(),
 		Max:  col.Max(),
 	}
+}
+
+// ============ Part 4: Working with Real CSV Files ============
+
+// 18. ReadEmployees
+func ReadEmployees(filename string) ([]Employee, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var employees []Employee
+	for i, row := range records {
+		if i == 0 {
+			continue // Skip header
+		}
+
+		id, _ := strconv.Atoi(row[0])
+		salary, _ := strconv.Atoi(row[3])
+		years, _ := strconv.Atoi(row[4])
+
+		employees = append(employees, Employee{
+			ID:         id,
+			Name:       row[1],
+			Department: row[2],
+			Salary:     salary,
+			Years:      years,
+		})
+	}
+
+	return employees, nil
+}
+
+// 19. AverageSalaryByDepartment
+func AverageSalaryByDepartment(employees []Employee) map[string]float64 {
+	totals := make(map[string]int)
+	counts := make(map[string]int)
+
+	for _, e := range employees {
+		totals[e.Department] += e.Salary
+		counts[e.Department]++
+	}
+
+	result := make(map[string]float64)
+	for dept, total := range totals {
+		result[dept] = float64(total) / float64(counts[dept])
+	}
+	return result
+}
+
+// 20. TopEarners
+func TopEarners(employees []Employee, n int) []Employee {
+	sorted := make([]Employee, len(employees))
+	copy(sorted, employees)
+
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i].Salary > sorted[j].Salary
+	})
+
+	if n > len(sorted) {
+		n = len(sorted)
+	}
+	return sorted[:n]
+}
+
+// 21. FilterByExperience
+func FilterByExperience(employees []Employee, minYears int) []Employee {
+	var result []Employee
+	for _, e := range employees {
+		if e.Years >= minYears {
+			result = append(result, e)
+		}
+	}
+	return result
+}
+
+// 22. TotalPayroll
+func TotalPayroll(employees []Employee) int {
+	total := 0
+	for _, e := range employees {
+		total += e.Salary
+	}
+	return total
+}
+
+// 23. ReadSalesCSV
+func ReadSalesCSV(filename string) ([]Sale, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var sales []Sale
+	for i, row := range records {
+		if i == 0 {
+			continue // Skip header
+		}
+
+		qty, _ := strconv.Atoi(row[1])
+		price, _ := strconv.ParseFloat(row[2], 64)
+
+		sales = append(sales, Sale{
+			Product:  row[0],
+			Quantity: qty,
+			Price:    price,
+			Region:   row[3],
+		})
+	}
+
+	return sales, nil
 }

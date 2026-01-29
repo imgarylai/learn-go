@@ -10,7 +10,10 @@ package dataprocessing
 //   go get github.com/go-gota/gota/series
 
 import (
+	"encoding/csv"
+	"os"
 	"sort"
+	"strconv"
 
 	"github.com/go-gota/gota/dataframe"
 	"github.com/go-gota/gota/series"
@@ -158,9 +161,61 @@ func GetQuantityStats(df dataframe.DataFrame) ColumnStats {
 	return ColumnStats{}
 }
 
+// ============ Part 4: Working with Real CSV Files ============
+// Use the CSV files in testdata/ folder
+
+// Employee represents an employee from employees.csv
+type Employee struct {
+	ID         int
+	Name       string
+	Department string
+	Salary     int
+	Years      int
+}
+
+// 18. ReadEmployees reads employees.csv from testdata folder
+func ReadEmployees(filename string) ([]Employee, error) {
+	// TODO: Read CSV and parse into []Employee
+	return nil, nil
+}
+
+// 19. AverageSalaryByDepartment calculates avg salary per department
+// In Python: df.groupby('department')['salary'].mean()
+func AverageSalaryByDepartment(employees []Employee) map[string]float64 {
+	// TODO: Return map of department -> average salary
+	return nil
+}
+
+// 20. TopEarners returns top N employees by salary
+func TopEarners(employees []Employee, n int) []Employee {
+	// TODO: Sort by salary descending, return top N
+	return nil
+}
+
+// 21. FilterByExperience returns employees with >= minYears
+func FilterByExperience(employees []Employee, minYears int) []Employee {
+	// TODO: Filter employees by years of experience
+	return nil
+}
+
+// 22. TotalPayroll calculates sum of all salaries
+func TotalPayroll(employees []Employee) int {
+	// TODO: Sum all salaries
+	return 0
+}
+
+// 23. ReadSalesCSV reads sales.csv and returns []Sale
+func ReadSalesCSV(filename string) ([]Sale, error) {
+	// TODO: Read sales.csv and parse into []Sale
+	return nil, nil
+}
+
 // Keep imports used
 var (
 	_ = sort.Slice
 	_ = dataframe.DataFrame{}
 	_ = series.Series{}
+	_ = csv.Reader{}
+	_ = os.Open
+	_ = strconv.Atoi
 )

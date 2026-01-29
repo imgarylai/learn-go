@@ -294,6 +294,120 @@ func TestGetQuantityStats(t *testing.T) {
 	}
 }
 
+// ============ Part 4: Tests using real CSV files from testdata/ ============
+
+func TestReadEmployees(t *testing.T) {
+	employees, err := ReadEmployees("testdata/employees.csv")
+	if err != nil {
+		t.Fatalf("ReadEmployees failed: %v", err)
+	}
+
+	if len(employees) != 10 {
+		t.Errorf("expected 10 employees, got %d", len(employees))
+	}
+
+	// Check first employee
+	if employees[0].Name != "Alice" || employees[0].Department != "Engineering" {
+		t.Errorf("first employee: got %+v", employees[0])
+	}
+}
+
+func TestAverageSalaryByDepartment(t *testing.T) {
+	employees, _ := ReadEmployees("testdata/employees.csv")
+	avg := AverageSalaryByDepartment(employees)
+
+	// Engineering: (95000+110000+88000+125000)/4 = 104500
+	if avg["Engineering"] != 104500 {
+		t.Errorf("Engineering avg: got %.2f, want 104500", avg["Engineering"])
+	}
+
+	// Marketing: (65000+71000+59000)/3 = 65000
+	if avg["Marketing"] != 65000 {
+		t.Errorf("Marketing avg: got %.2f, want 65000", avg["Marketing"])
+	}
+}
+
+func TestTopEarners(t *testing.T) {
+	employees, _ := ReadEmployees("testdata/employees.csv")
+	top3 := TopEarners(employees, 3)
+
+	if len(top3) != 3 {
+		t.Fatalf("expected 3, got %d", len(top3))
+	}
+
+	// Henry (125000), Charlie (110000), Alice (95000)
+	if top3[0].Name != "Henry" {
+		t.Errorf("top earner: got %s, want Henry", top3[0].Name)
+	}
+	if top3[0].Salary != 125000 {
+		t.Errorf("top salary: got %d, want 125000", top3[0].Salary)
+	}
+}
+
+func TestFilterByExperience(t *testing.T) {
+	employees, _ := ReadEmployees("testdata/employees.csv")
+	experienced := FilterByExperience(employees, 5)
+
+	if len(experienced) != 4 {
+		t.Errorf("expected 4 with 5+ years, got %d", len(experienced))
+	}
+
+	for _, e := range experienced {
+		if e.Years < 5 {
+			t.Errorf("found employee with %d years, expected >= 5", e.Years)
+		}
+	}
+}
+
+func TestTotalPayroll(t *testing.T) {
+	employees, _ := ReadEmployees("testdata/employees.csv")
+	total := TotalPayroll(employees)
+
+	// 95000+65000+110000+72000+88000+71000+68000+125000+59000+82000 = 835000
+	if total != 835000 {
+		t.Errorf("total payroll: got %d, want 835000", total)
+	}
+}
+
+func TestReadSalesCSV(t *testing.T) {
+	sales, err := ReadSalesCSV("testdata/sales.csv")
+	if err != nil {
+		t.Fatalf("ReadSalesCSV failed: %v", err)
+	}
+
+	if len(sales) != 10 {
+		t.Errorf("expected 10 sales, got %d", len(sales))
+	}
+
+	// Check first sale
+	if sales[0].Product != "Widget" || sales[0].Quantity != 10 {
+		t.Errorf("first sale: got %+v", sales[0])
+	}
+}
+
+func TestReadSalesCSVWithAnalysis(t *testing.T) {
+	sales, _ := ReadSalesCSV("testdata/sales.csv")
+
+	// Test with our existing functions
+	revenue := TotalRevenue(sales)
+	// Calculate expected: sum of qty*price for all rows
+	// 10*25 + 5*50 + 8*25 + 15*30 + 3*50 + 12*25 + 7*30 + 9*50 + 6*25 + 11*30
+	// = 250 + 250 + 200 + 450 + 150 + 300 + 210 + 450 + 150 + 330 = 2740
+	if revenue != 2740 {
+		t.Errorf("total revenue: got %.2f, want 2740", revenue)
+	}
+
+	unique := UniqueProducts(sales)
+	if len(unique) != 3 {
+		t.Errorf("unique products: got %d, want 3", len(unique))
+	}
+
+	byRegion := RevenueByRegion(sales)
+	if len(byRegion) != 4 {
+		t.Errorf("expected 4 regions, got %d", len(byRegion))
+	}
+}
+
 // Keep imports
 var (
 	_ = series.Int
