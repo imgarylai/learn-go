@@ -1,0 +1,198 @@
+// Solutions for Exercise 6: Concurrency
+
+package concurrency
+
+import (
+	"sync"
+	"time"
+)
+
+// 1. ChannelBasics
+func ChannelBasics() int {
+	ch := make(chan int)
+	go func() {
+		ch <- 42
+	}()
+	return <-ch
+}
+
+// 2. BufferedChannel
+func BufferedChannel() []int {
+	ch := make(chan int, 3)
+	ch <- 1
+	ch <- 2
+	ch <- 3
+	return []int{<-ch, <-ch, <-ch}
+}
+
+// 3. SumWithChannel
+func SumWithChannel(nums []int) int {
+	ch := make(chan int)
+	go func() {
+		sum := 0
+		for _, n := range nums {
+			sum += n
+		}
+		ch <- sum
+	}()
+	return <-ch
+}
+
+// 4. CollectFromChannel
+func CollectFromChannel(count int) []int {
+	ch := make(chan int)
+	go func() {
+		for i := 0; i < count; i++ {
+			ch <- i
+		}
+		close(ch)
+	}()
+
+	var result []int
+	for v := range ch {
+		result = append(result, v)
+	}
+	return result
+}
+
+// 5. SelectFirst
+func SelectFirst(ch1, ch2 <-chan string) string {
+	select {
+	case v := <-ch1:
+		return v
+	case v := <-ch2:
+		return v
+	}
+}
+
+// 6. WithTimeout
+func WithTimeout(work func() int, timeout time.Duration) (int, bool) {
+	ch := make(chan int, 1)
+	go func() {
+		ch <- work()
+	}()
+
+	select {
+	case result := <-ch:
+		return result, true
+	case <-time.After(timeout):
+		return 0, false
+	}
+}
+
+// 7. SumParallel
+func SumParallel(slices [][]int) int {
+	var wg sync.WaitGroup
+	results := make(chan int, len(slices))
+
+	for _, slice := range slices {
+		wg.Add(1)
+		go func(nums []int) {
+			defer wg.Done()
+			sum := 0
+			for _, n := range nums {
+				sum += n
+			}
+			results <- sum
+		}(slice)
+	}
+
+	wg.Wait()
+	close(results)
+
+	total := 0
+	for sum := range results {
+		total += sum
+	}
+	return total
+}
+
+// 8. WorkerPool
+func WorkerPool(jobs []int, numWorkers int) []int {
+	jobsCh := make(chan int, len(jobs))
+	resultsCh := make(chan int, len(jobs))
+
+	// Start workers
+	for i := 0; i < numWorkers; i++ {
+		go func() {
+			for job := range jobsCh {
+				resultsCh <- job * job
+			}
+		}()
+	}
+
+	// Send jobs
+	for _, job := range jobs {
+		jobsCh <- job
+	}
+	close(jobsCh)
+
+	// Collect results
+	results := make([]int, len(jobs))
+	for i := 0; i < len(jobs); i++ {
+		results[i] = <-resultsCh
+	}
+	return results
+}
+
+// 9. FanOutFanIn
+func FanOutFanIn(nums []int, workers int) int {
+	input := make(chan int, len(nums))
+	output := make(chan int, len(nums))
+
+	// Start workers
+	var wg sync.WaitGroup
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for n := range input {
+				output <- n * 2
+			}
+		}()
+	}
+
+	// Send input
+	for _, n := range nums {
+		input <- n
+	}
+	close(input)
+
+	// Wait and close output
+	go func() {
+		wg.Wait()
+		close(output)
+	}()
+
+	// Sum results
+	sum := 0
+	for v := range output {
+		sum += v
+	}
+	return sum
+}
+
+// 10. Counter with Mutex
+func (c *Counter) Increment() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.value++
+}
+
+func (c *Counter) Value() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.value
+}
+
+func ConcurrentIncrement(c *Counter, times int) {
+	var wg sync.WaitGroup
+	for i := 0; i < times; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			c.Increment()
+		}()
+	}
+	wg.Wait()
+}

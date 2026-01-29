@@ -21,6 +21,27 @@ go run .
 | [06 - Structs](docs/06-structs.md) | Types and structs |
 | [07 - Pointers](docs/07-pointers.md) | Understanding pointers |
 | [08 - Web Frameworks](docs/08-web-frameworks.md) | Chi, Gin, Echo, Fiber |
+| [09 - File Processing](docs/09-file-processing.md) | Reading, writing, CSV, JSON |
+| [10 - Data Processing](docs/10-data-processing.md) | Slices, generics, gota DataFrame |
+
+## Exercises
+
+Practice exercises with JS/TS comparisons. See [exercises/README.md](exercises/README.md).
+
+```bash
+cd exercises/01-basics && go test -v
+```
+
+| # | Topic | Focus |
+|---|-------|-------|
+| 01 | Basics | Variables, types, constants |
+| 02 | Functions | Multiple returns, errors, defer |
+| 03 | Structs | Methods, embedding, tags |
+| 04 | Collections | Slices, maps, iteration |
+| 05 | Interfaces | Implicit interfaces, assertions |
+| 06 | Concurrency | Goroutines, channels, select |
+| 07 | File Processing | CSV, JSON, line-by-line |
+| 08 | Data Processing | Filter, map, reduce, gota |
 
 ## Quick Reference
 

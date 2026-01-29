@@ -1,0 +1,77 @@
+// Solutions for Exercise 3: Structs and Methods
+
+package structs
+
+import (
+	"fmt"
+	"strings"
+)
+
+// 1. NewUser
+func NewUser(id int, name, email string) *User {
+	return &User{
+		ID:    id,
+		Name:  name,
+		Email: email,
+	}
+}
+
+// 2. DisplayName
+func (u User) DisplayName() string {
+	return fmt.Sprintf("%s <%s>", u.Name, u.Email)
+}
+
+// 3. UpdateEmail
+func (u *User) UpdateEmail(newEmail string) {
+	u.Email = newEmail
+}
+
+// 4. IsValidEmail
+func (u User) IsValidEmail() bool {
+	return strings.Contains(u.Email, "@")
+}
+
+// 5. NewAdmin
+func NewAdmin(id int, name, email, role string) *Admin {
+	return &Admin{
+		User: User{
+			ID:    id,
+			Name:  name,
+			Email: email,
+		},
+		Role: role,
+	}
+}
+
+// 6. CanDelete
+func (a Admin) CanDelete() bool {
+	return a.Role == "superadmin"
+}
+
+// 7. NewProduct
+func NewProduct(id int, name string, price float64) Product {
+	return Product{
+		ID:    id,
+		Name:  name,
+		Price: price,
+	}
+}
+
+// 8. WithDiscount
+func (p Product) WithDiscount(percent float64) Product {
+	return Product{
+		ID:    p.ID,
+		Name:  p.Name,
+		Price: p.Price * (1 - percent/100),
+	}
+}
+
+// 9. Area
+func (r Rectangle) Area() float64 {
+	return r.Width * r.Height
+}
+
+// 10. Perimeter
+func (r Rectangle) Perimeter() float64 {
+	return 2 * (r.Width + r.Height)
+}

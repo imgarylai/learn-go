@@ -1,0 +1,94 @@
+// Solutions for Exercise 5: Interfaces
+
+package interfaces
+
+import (
+	"fmt"
+	"math"
+)
+
+// 1. Rectangle Area
+func (r Rectangle) Area() float64 {
+	return r.Width * r.Height
+}
+
+// 2. Rectangle Perimeter
+func (r Rectangle) Perimeter() float64 {
+	return 2 * (r.Width + r.Height)
+}
+
+// 3. Circle Area
+func (c Circle) Area() float64 {
+	return math.Pi * c.Radius * c.Radius
+}
+
+// 4. Circle Perimeter
+func (c Circle) Perimeter() float64 {
+	return 2 * math.Pi * c.Radius
+}
+
+// 5. DescribeShape
+func DescribeShape(s Shape) string {
+	return fmt.Sprintf("Area: %.2f, Perimeter: %.2f", s.Area(), s.Perimeter())
+}
+
+// 6. GetRadius
+func GetRadius(s Shape) (float64, bool) {
+	circle, ok := s.(Circle)
+	if ok {
+		return circle.Radius, true
+	}
+	return 0, false
+}
+
+// 7. DescribeType
+func DescribeType(s Shape) string {
+	switch s.(type) {
+	case Rectangle:
+		return "Rectangle"
+	case Circle:
+		return "Circle"
+	default:
+		return "Unknown"
+	}
+}
+
+// 8. Person String
+func (p Person) String() string {
+	return fmt.Sprintf("%s (%d years old)", p.Name, p.Age)
+}
+
+// 9. ValidationError Error
+func (e ValidationError) Error() string {
+	return fmt.Sprintf("validation failed on %s: %s", e.Field, e.Message)
+}
+
+// 10. ValidateName
+func ValidateName(name string) error {
+	if name == "" {
+		return ValidationError{Field: "name", Message: "required"}
+	}
+	return nil
+}
+
+// 11. StringLength
+func StringLength(v any) int {
+	if str, ok := v.(string); ok {
+		return len(str)
+	}
+	return -1
+}
+
+// 12. Describe
+func Describe(v any) string {
+	switch val := v.(type) {
+	case int:
+		return fmt.Sprintf("integer: %d", val)
+	case string:
+		return fmt.Sprintf("string: %s", val)
+	case bool:
+		return fmt.Sprintf("boolean: %v", val)
+	default:
+		return "unknown"
+	}
+}

@@ -1,0 +1,49 @@
+// Solutions for Exercise 1: Variables and Types
+
+package basics
+
+// 1. GetGreeting
+func GetGreeting() string {
+	greeting := "Hello, Go!"
+	return greeting
+}
+
+// 2. GetPersonInfo
+func GetPersonInfo() (string, int) {
+	name, age := "Alice", 30
+	return name, age
+}
+
+// 3. IntToPercentage
+func IntToPercentage(n int) float64 {
+	return float64(n) / 100
+}
+
+// 4. GetZeroValues
+func GetZeroValues() (int, string, bool, float64) {
+	var i int
+	var s string
+	var b bool
+	var f float64
+	return i, s, b, f
+}
+
+// 5. GetCircleArea
+func GetCircleArea(radius float64) float64 {
+	const PI = 3.14159
+	return PI * radius * radius
+}
+
+// 6. Swap
+func Swap(a, b int) (int, int) {
+	return b, a
+}
+
+// 7. InferredTypes
+func InferredTypes() (intVal int, floatVal float64, stringVal string, boolVal bool) {
+	intVal = 42
+	floatVal = 3.14
+	stringVal = "hello"
+	boolVal = true
+	return
+}

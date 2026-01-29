@@ -1,0 +1,180 @@
+// Solutions for Exercise 8: Data Processing
+
+package dataprocessing
+
+import (
+	"sort"
+
+	"github.com/go-gota/gota/dataframe"
+	"github.com/go-gota/gota/series"
+)
+
+// ============ Part 1: Pure Go ============
+
+// 1. FilterSales
+func FilterSales(sales []Sale, minQty int) []Sale {
+	var result []Sale
+	for _, s := range sales {
+		if s.Quantity > minQty {
+			result = append(result, s)
+		}
+	}
+	return result
+}
+
+// 2. GetProductNames
+func GetProductNames(sales []Sale) []string {
+	names := make([]string, len(sales))
+	for i, s := range sales {
+		names[i] = s.Product
+	}
+	return names
+}
+
+// 3. TotalRevenue
+func TotalRevenue(sales []Sale) float64 {
+	var total float64
+	for _, s := range sales {
+		total += float64(s.Quantity) * s.Price
+	}
+	return total
+}
+
+// 4. GroupByRegion
+func GroupByRegion(sales []Sale) map[string][]Sale {
+	result := make(map[string][]Sale)
+	for _, s := range sales {
+		result[s.Region] = append(result[s.Region], s)
+	}
+	return result
+}
+
+// 5. RevenueByRegion
+func RevenueByRegion(sales []Sale) map[string]float64 {
+	grouped := GroupByRegion(sales)
+	result := make(map[string]float64)
+	for region, regionSales := range grouped {
+		result[region] = TotalRevenue(regionSales)
+	}
+	return result
+}
+
+// 6. TopNSales
+func TopNSales(sales []Sale, n int) []Sale {
+	// Copy to avoid modifying original
+	sorted := make([]Sale, len(sales))
+	copy(sorted, sales)
+
+	// Sort by revenue descending
+	sort.Slice(sorted, func(i, j int) bool {
+		revI := float64(sorted[i].Quantity) * sorted[i].Price
+		revJ := float64(sorted[j].Quantity) * sorted[j].Price
+		return revI > revJ
+	})
+
+	if n > len(sorted) {
+		n = len(sorted)
+	}
+	return sorted[:n]
+}
+
+// 7. UniqueProducts
+func UniqueProducts(sales []Sale) []string {
+	seen := make(map[string]bool)
+	var result []string
+	for _, s := range sales {
+		if !seen[s.Product] {
+			seen[s.Product] = true
+			result = append(result, s.Product)
+		}
+	}
+	return result
+}
+
+// 8. SalesCountByProduct
+func SalesCountByProduct(sales []Sale) map[string]int {
+	counts := make(map[string]int)
+	for _, s := range sales {
+		counts[s.Product]++
+	}
+	return counts
+}
+
+// ============ Part 2: Generic Helpers ============
+
+// 9. Generic Filter
+func Filter[T any](items []T, predicate func(T) bool) []T {
+	result := make([]T, 0)
+	for _, item := range items {
+		if predicate(item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+// 10. Generic Map
+func Map[T, U any](items []T, transform func(T) U) []U {
+	result := make([]U, len(items))
+	for i, item := range items {
+		result[i] = transform(item)
+	}
+	return result
+}
+
+// 11. Generic Reduce
+func Reduce[T, U any](items []T, initial U, reducer func(U, T) U) U {
+	result := initial
+	for _, item := range items {
+		result = reducer(result, item)
+	}
+	return result
+}
+
+// 12. Generic GroupBy
+func GroupBy[T any, K comparable](items []T, keyFn func(T) K) map[K][]T {
+	result := make(map[K][]T)
+	for _, item := range items {
+		key := keyFn(item)
+		result[key] = append(result[key], item)
+	}
+	return result
+}
+
+// ============ Part 3: Gota DataFrame ============
+
+// 13. SalesToDataFrame
+func SalesToDataFrame(sales []Sale) dataframe.DataFrame {
+	return dataframe.LoadStructs(sales)
+}
+
+// 14. FilterDataFrame
+func FilterDataFrame(df dataframe.DataFrame, minQty int) dataframe.DataFrame {
+	return df.Filter(
+		dataframe.F{Colname: "Quantity", Comparator: series.Greater, Comparando: minQty},
+	)
+}
+
+// 15. SelectColumns
+func SelectColumns(df dataframe.DataFrame, cols ...string) dataframe.DataFrame {
+	return df.Select(cols)
+}
+
+// 16. SortByQuantity
+func SortByQuantity(df dataframe.DataFrame, descending bool) dataframe.DataFrame {
+	if descending {
+		return df.Arrange(dataframe.RevSort("Quantity"))
+	}
+	return df.Arrange(dataframe.Sort("Quantity"))
+}
+
+// 17. GetQuantityStats
+func GetQuantityStats(df dataframe.DataFrame) ColumnStats {
+	col := df.Col("Quantity")
+	return ColumnStats{
+		Sum:  col.Sum(),
+		Mean: col.Mean(),
+		Min:  col.Min(),
+		Max:  col.Max(),
+	}
+}
