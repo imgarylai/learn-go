@@ -20,9 +20,10 @@ go run .
 | [05 - Tooling](docs/05-tooling.md) | Go toolchain |
 | [06 - Structs](docs/06-structs.md) | Types and structs |
 | [07 - Pointers](docs/07-pointers.md) | Understanding pointers |
-| [08 - Web Frameworks](docs/08-web-frameworks.md) | Chi, Gin, Echo, Fiber |
-| [09 - File Processing](docs/09-file-processing.md) | Reading, writing, CSV, JSON |
-| [10 - Data Processing](docs/10-data-processing.md) | Slices, generics, gota DataFrame |
+| [08 - Collections](docs/08-collections.md) | Arrays, slices, maps |
+| [09 - Web Frameworks](docs/09-web-frameworks.md) | Chi, Gin, Echo, Fiber |
+| [10 - File Processing](docs/10-file-processing.md) | Reading, writing, CSV, JSON |
+| [11 - Data Processing](docs/11-data-processing.md) | Slices, generics, gota DataFrame |
 
 ## Exercises
 
